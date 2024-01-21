@@ -2,12 +2,27 @@ Docker & SQL
 
 --1)
 
-docker build --help
+docker run -it --rm ubuntu bash   # (adding --rm will automatically remove the container when exits)
+
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+$ docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
 
 --2)
 
-winpty docker run -it python:3.9 bash
+docker run -it python:3.9 bash
 pip list
+
+root@e2f866310549:/# pip list
+Package    Version
+---------- -------
+pip        23.0.1
+setuptools 58.1.0
+wheel      0.42.0
+
 
 --3)
 
