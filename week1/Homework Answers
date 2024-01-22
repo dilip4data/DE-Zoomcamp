@@ -41,10 +41,13 @@ WHERE TRIP_DISTANCE = (SELECT MAX(TRIP_DISTANCE) FROM GREEN_TAXI_DATA);
 
 --5)
 
-SELECT PASSENGER_COUNT, COUNT(*) 
-FROM GREEN_TAXI_DATA
-WHERE PASSENGER_COUNT IN (2,3) AND DATE(LPEP_PICKUP_DATETIME) = '2019-01-01' 
-GROUP BY 1;
+select "Borough",sum(fare_amount) as total_amount From green_taxi_data join taxi_zone on "PULocationID" = "LocationID" 
+where lpep_pickup_datetime::date = '2019-09-18'
+and "Borough" !='Unknown'
+group by "Borough" 
+having sum(fare_amount) > 50000;
+
+"Brooklyn","Manhattan","Queens"
 
 --6)
 
