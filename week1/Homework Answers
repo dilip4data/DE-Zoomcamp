@@ -29,7 +29,7 @@ wheel      0.42.0
 select count(*) from green_taxi_data where lpep_pickup_datetime::date = '2019-09-18'
 and lpep_dropoff_datetime::date =  '2019-09-18'; 
 
-15612
+=> 15612
 
 --4)
 
@@ -37,7 +37,7 @@ SELECT LPEP_PICKUP_DATETIME :: date
 FROM GREEN_TAXI_DATA
 WHERE TRIP_DISTANCE = (SELECT MAX(TRIP_DISTANCE) FROM GREEN_TAXI_DATA);
 
-2019-09-26
+=> 2019-09-26
 
 --5)
 
@@ -47,27 +47,22 @@ and "Borough" !='Unknown'
 group by "Borough" 
 having sum(fare_amount) > 50000;
 
-"Brooklyn","Manhattan","Queens"
+=> "Brooklyn","Manhattan","Queens"
 
 --6)
 
-WITH LOC AS 
-(
-  SELECT DISTINCT "LocationID" FROM TAXI_ZONE
-  WHERE "Zone" = 'Astoria'
-), TIP AS
-(
-  SELECT MAX(TIP_AMOUNT) FROM GREEN_TAXI_DATA
-  WHERE "PULocationID" = (SELECT * FROM LOC)
-), LOC_ID AS
-(
-	SELECT DISTINCT "DOLocationID" 
-	FROM GREEN_TAXI_DATA 
-	WHERE "PULocationID" = (SELECT * FROM LOC) AND TIP_AMOUNT = (SELECT * FROM TIP)
-)
+with pickup_cte as (
+select distinct "PULocationID",lpep_pickup_datetime::date as pickup_date,
+	lpep_dropoff_datetime::date as dropoff_date,"Zone","DOLocationID",tip_amount from taxi_zone 
+	join green_taxi_data on "PULocationID" = "LocationID" 
+	where lower("Zone") = 'astoria' and to_char(lpep_pickup_datetime::date,'MM-YYYY') = '09-2019'
+	) 
+select "Zone" from taxi_zone where "LocationID" =
+	(select "DOLocationID" from pickup_cte where tip_amount = 
+			(select max(tip_amount) from pickup_cte)
+		);
 
-SELECT DISTINCT "Zone" FROM TAXI_ZONE
-WHERE "LocationID" = (SELECT * FROM LOC_ID);
+=> JFK Airport
 
 
 Terraform
