@@ -1,0 +1,69 @@
+## create a network that serves both database and pgadmin client tool
+
+docker network create pg-network
+
+# create a secret env file for sensitive passwords
+
+source .my_env
+
+# use the env file parameter to run the command line.
+
+docker run --env-file .my_env -d -it \
+-e POSTGRES_USER=$USER \
+-e POSTGRES_PASSWORD=$PASS \
+-e POSTGRES_DB=$DB \
+-v "/G:/workspace/DE-Zoomcamp/week1/ny_taxi_postgres_data":/var/lib/postgresql/data \
+-p 5432:5432 \
+--network=pg-network \
+--name pg-database \
+postgres:15
+
+source .my_env
+
+docker run --env-file .my_env -d -it  \
+-e PGADMIN_DEFAULT_EMAIL=$PGADMIN_EMAIL \
+-e PGADMIN_DEFAULT_PASSWORD=$PGADMIN_PASS \
+-p 8080:80 \
+-v "/G:/workspace/DE-Zoomcamp/week1/pgadmin_data":/var/lib/pgadmin \
+--network=pg-network \
+--name pgadmin-4 \
+dpage/pgadmin4
+
+# convert Jupiter Notebook to script
+
+Jupyter nbconvert --to=script upload-data.ipynb --output ingest_data 
+
+
+# Run the Python Ingestion script
+
+source .my_env
+
+python /g/workspace/DE-Zoomcamp/week1/ingest_data.py \
+ --user=${USER} \
+ --password=${PASS} \
+ --port=${PORT} \
+ --host=localhost \
+ --db=${DB} \
+ --table_name ${TABLE_NAME1} ${TABLE_NAME2} \
+ --url ${URL1} ${URL2}
+
+ # Docker Ingestion
+
+docker build -t taxi_ingest:v001 .
+
+ docker run --env-file /g/workspace/DE-Zoomcamp/week1/.my_env -it \
+ --network=pg-network \
+   taxi_ingest:v001 \
+ --user=$USER \
+ --password=$PASS \
+ --host=$HOST \
+ --port=$PORT \
+ --db=$DB \
+ --table_name $TABLE_NAME1 $TABLE_NAME2 \
+ --url $URL1 $URL2
+
+ ## Docker Compose
+
+ docker-compose --env-file /g/workspace/DE-Zoomcamp/week1/.my_env --remove-orphans up
+
+ docker-compose  --remove-orphans up

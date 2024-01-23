@@ -1,0 +1,13 @@
+USER='root'
+PASS='root'
+DB='ny_taxi'
+PORT=5432
+HOST='pg-database'
+TABLE_NAME1='green_taxi_data'
+TABLE_NAME2='taxi_zone'
+URL1="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/green/green_tripdata_2019-09.csv.gz"
+URL2="https://s3.amazonaws.com/nyc-tlc/misc/taxi+_zone_lookup.csv"
+
+PGADMIN_EMAIL='admin@admin.com'
+PGADMIN_PASS='root'
+
