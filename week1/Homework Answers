@@ -2,51 +2,67 @@ Docker & SQL
 
 --1)
 
-docker build --help
+docker run -it --rm ubuntu bash   # (adding --rm will automatically remove the container when exits)
+
+$ docker ps -a
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+$ docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
 
 --2)
 
-winpty docker run -it python:3.9 bash
+docker run -it python:3.9 bash
 pip list
+
+root@e2f866310549:/# pip list
+Package    Version
+---------- -------
+pip        23.0.1
+setuptools 58.1.0
+wheel      0.42.0
+
 
 --3)
 
-SELECT COUNT(*) 
-FROM GREEN_TAXI_DATA
-WHERE DATE(LPEP_PICKUP_DATETIME) = '2019-01-15' AND DATE(LPEP_DROPOFF_DATETIME) = '2019-01-15';
+select count(*) from green_taxi_data where lpep_pickup_datetime::date = '2019-09-18'
+and lpep_dropoff_datetime::date =  '2019-09-18'; 
+
+=> 15612
 
 --4)
 
-SELECT DISTINCT DATE(LPEP_PICKUP_DATETIME) 
+SELECT LPEP_PICKUP_DATETIME :: date
 FROM GREEN_TAXI_DATA
 WHERE TRIP_DISTANCE = (SELECT MAX(TRIP_DISTANCE) FROM GREEN_TAXI_DATA);
 
+=> 2019-09-26
+
 --5)
 
-SELECT PASSENGER_COUNT, COUNT(*) 
-FROM GREEN_TAXI_DATA
-WHERE PASSENGER_COUNT IN (2,3) AND DATE(LPEP_PICKUP_DATETIME) = '2019-01-01' 
-GROUP BY 1;
+select "Borough",sum(fare_amount) as total_amount From green_taxi_data join taxi_zone on "PULocationID" = "LocationID" 
+where lpep_pickup_datetime::date = '2019-09-18'
+and "Borough" !='Unknown'
+group by "Borough" 
+having sum(fare_amount) > 50000;
+
+=> "Brooklyn","Manhattan","Queens"
 
 --6)
 
-WITH LOC AS 
-(
-  SELECT DISTINCT "LocationID" FROM TAXI_ZONE
-  WHERE "Zone" = 'Astoria'
-), TIP AS
-(
-  SELECT MAX(TIP_AMOUNT) FROM GREEN_TAXI_DATA
-  WHERE "PULocationID" = (SELECT * FROM LOC)
-), LOC_ID AS
-(
-	SELECT DISTINCT "DOLocationID" 
-	FROM GREEN_TAXI_DATA 
-	WHERE "PULocationID" = (SELECT * FROM LOC) AND TIP_AMOUNT = (SELECT * FROM TIP)
-)
+with pickup_cte as (
+select distinct "PULocationID",lpep_pickup_datetime::date as pickup_date,
+	lpep_dropoff_datetime::date as dropoff_date,"Zone","DOLocationID",tip_amount from taxi_zone 
+	join green_taxi_data on "PULocationID" = "LocationID" 
+	where lower("Zone") = 'astoria' and to_char(lpep_pickup_datetime::date,'MM-YYYY') = '09-2019'
+	) 
+select "Zone" from taxi_zone where "LocationID" =
+	(select "DOLocationID" from pickup_cte where tip_amount = 
+			(select max(tip_amount) from pickup_cte)
+		);
 
-SELECT DISTINCT "Zone" FROM TAXI_ZONE
-WHERE "LocationID" = (SELECT * FROM LOC_ID);
+=> JFK Airport
 
 
 Terraform
