@@ -67,7 +67,12 @@ select "Zone" from taxi_zone where "LocationID" =
 
 Terraform
 
-terraform apply
+$ terraform apply
+var.project
+  dtc-de-2024
+
+  Enter a value: dtc-de-2024
+
 
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
@@ -79,55 +84,34 @@ Terraform will perform the following actions:
   + resource "google_bigquery_dataset" "dataset" {
       + creation_time              = (known after apply)
       + dataset_id                 = "trips_data_all"
+      + default_collation          = (known after apply)
       + delete_contents_on_destroy = false
+      + effective_labels           = (known after apply)
       + etag                       = (known after apply)
       + id                         = (known after apply)
-      + labels                     = (known after apply)
+      + is_case_insensitive        = (known after apply)
       + last_modified_time         = (known after apply)
-      + location                   = "europe-west6"
-      + project                    = "composed-sun-375018"
+      + location                   = "us-east1"
+      + max_time_travel_hours      = (known after apply)
+      + project                    = "dtc-de-2024"
       + self_link                  = (known after apply)
-
-      + access {
-          + domain         = (known after apply)
-          + group_by_email = (known after apply)
-          + role           = (known after apply)
-          + special_group  = (known after apply)
-          + user_by_email  = (known after apply)
-
-          + dataset {
-              + target_types = (known after apply)
-
-              + dataset {
-                  + dataset_id = (known after apply)
-                  + project_id = (known after apply)
-                }
-            }
-
-          + routine {
-              + dataset_id = (known after apply)
-              + project_id = (known after apply)
-              + routine_id = (known after apply)
-            }
-
-          + view {
-              + dataset_id = (known after apply)
-              + project_id = (known after apply)
-              + table_id   = (known after apply)
-            }
-        }
+      + storage_billing_model      = (known after apply)
+      + terraform_labels           = (known after apply)
     }
 
   # google_storage_bucket.data-lake-bucket will be created
   + resource "google_storage_bucket" "data-lake-bucket" {
+      + effective_labels            = (known after apply)
       + force_destroy               = true
       + id                          = (known after apply)
-      + location                    = "EUROPE-WEST6"
-      + name                        = "dtc_data_lake_composed-sun-375018"
+      + location                    = "US-EAST1"
+      + name                        = "dtc_data_lake_dtc-de-2024"
       + project                     = (known after apply)
       + public_access_prevention    = (known after apply)
+      + rpo                         = (known after apply)
       + self_link                   = (known after apply)
       + storage_class               = "STANDARD"
+      + terraform_labels            = (known after apply)
       + uniform_bucket_level_access = true
       + url                         = (known after apply)
 
@@ -135,7 +119,6 @@ Terraform will perform the following actions:
           + action {
               + type = "Delete"
             }
-
           + condition {
               + age                   = 30
               + matches_prefix        = []
@@ -147,11 +130,6 @@ Terraform will perform the following actions:
 
       + versioning {
           + enabled = true
-        }
-
-      + website {
-          + main_page_suffix = (known after apply)
-          + not_found_page   = (known after apply)
         }
     }
 
@@ -165,7 +143,8 @@ Do you want to perform these actions?
 
 google_bigquery_dataset.dataset: Creating...
 google_storage_bucket.data-lake-bucket: Creating...
-google_storage_bucket.data-lake-bucket: Creation complete after 2s [id=dtc_data_lake_composed-sun-375018]
-google_bigquery_dataset.dataset: Creation complete after 3s [id=projects/composed-sun-375018/datasets/trips_data_all]
+google_bigquery_dataset.dataset: Creation complete after 1s [id=projects/dtc-de-2024/datasets/trips_data_all]
+google_storage_bucket.data-lake-bucket: Creation complete after 1s [id=dtc_data_lake_dtc-de-2024]
 
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
