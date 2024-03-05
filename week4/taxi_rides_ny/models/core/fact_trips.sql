@@ -46,7 +46,7 @@ select trips_unioned.tripid,
     trips_unioned.tolls_amount, 
     trips_unioned.ehail_fee, 
     trips_unioned.improvement_surcharge, 
-    trips_unioned.total_amount, 
+    trips_unioned.total_amount as total_amount_tripduration, 
     trips_unioned.payment_type, 
     trips_unioned.payment_type_description
 from trips_unioned
