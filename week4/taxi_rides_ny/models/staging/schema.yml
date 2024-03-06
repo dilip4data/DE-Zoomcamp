@@ -8,6 +8,7 @@ sources:
     tables:
       - name: new_green_tripdata
       - name: new_yellow_tripdata
+      - name: fhv_tripdata_2019
 
 
 
